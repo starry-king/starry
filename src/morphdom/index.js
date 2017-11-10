@@ -206,24 +206,7 @@ function morphdom(
             if (curToNodeType === COMPONENT_NODE) {
 
                 if ((matchingFromComponent = existingComponentLookup[componentForNode.id]) === undefined) {
-                    if (isRerenderInBrowser === true) {
-                        var firstVChild = curToNodeChild.___firstChild;
-                        if (firstVChild) {
-                            if (!curFromNodeChild) {
-                                curFromNodeChild = insertBefore(createMarkerComment(), null, parentFromNode);
-                            }
-
-                            componentForNode.___startNode = curFromNodeChild;
-                            componentForNode.___endNode = resolveComponentEndNode(curFromNodeChild, firstVChild, parentFromNode);
-
-                        }  else {
-                            componentForNode.___startNode = componentForNode.___endNode = insertBefore(createMarkerComment(), curFromNodeChild, parentFromNode);
-                        }
-
-                        curFromNodeChild = morphComponent(parentFromNode, componentForNode, curToNodeChild);
-                    } else {
-                        insertVirtualComponentBefore(curToNodeChild, curFromNodeChild, parentFromNode, componentForNode);
-                    }
+                    insertVirtualComponentBefore(curToNodeChild, curFromNodeChild, parentFromNode, componentForNode);
                 } else {
                     if (matchingFromComponent.___startNode !== curFromNodeChild) {
                         if (curFromNodeChild &&
@@ -289,17 +272,6 @@ function morphdom(
                     }
                 } else {
                     if ((matchingFromEl = componentForNode.___keyedElements[curToNodeKey]) === undefined) {
-                        if (isRerenderInBrowser === true && curFromNodeChild &&
-                                curFromNodeChild.nodeType === ELEMENT_NODE &&
-                                curFromNodeChild.nodeName === curToNodeChild.___nodeName) {
-                            curVFromNodeChild = virtualizeElement(curFromNodeChild);
-                            curFromNodeChild.___markoKey = curToNodeKey;
-                            morphEl(curFromNodeChild, curVFromNodeChild, curToNodeChild, componentForNode, curToNodeKey);
-                            curToNodeChild = toNextSibling;
-                            curFromNodeChild = fromNextSibling;
-                            continue;
-                        }
-
                         insertVirtualNodeBefore(curToNodeChild, curToNodeKey, curFromNodeChild, parentFromNode, componentForNode);
                         fromNextSibling = curFromNodeChild;
                     } else {

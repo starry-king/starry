@@ -4,6 +4,13 @@ var COMMENT_NODE = 8;
 var COMPONENT_NODE = 2;
 
 function pairComponentNodes(startNode, endNode, vDocumentFragment) {
+    if (startNode === endNode) {
+        // There are no nodes inside the component rendered on the server
+        // so there is nothing to pair up. Just return without doing
+        // anything.
+        return;
+    }
+
     function pairComponentNodesHelper(realNode, vComponentNode) {
         var component = vComponentNode.___component;
         var commentPlaceholder;
@@ -15,11 +22,9 @@ function pairComponentNodes(startNode, endNode, vDocumentFragment) {
             // to assign it with a DOM node so we will create a placeholder
             commentPlaceholder = document.createComment('$marko');
             realNode.parentNode.insertBefore(commentPlaceholder, realNode);
-            component.___startNode = component.___endNode = commentPlaceholder;
 
-            // Continue pairing from the current DOM node that was already in
-            // the DOM:
-            return realNode;
+            // Return the end node
+            return (component.___startNode = component.___endNode = commentPlaceholder);
         }
 
         var vFirstChildType = vComponentFirstChild.___nodeType;
@@ -37,10 +42,8 @@ function pairComponentNodes(startNode, endNode, vDocumentFragment) {
             realNode = previousSibling.nextSibling;
         } else {
             previousSibling = component.___startNode = realNode;
-
             realNode = realNode.nextSibling;
         }
-
 
         // We paired up the start node. Now we need to pair up the end nodes
 
