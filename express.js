@@ -1,5 +1,5 @@
 var isDebug = require("./env").isDebug;
-var target = isDebug ? "marko/src/express" : "marko/dist/express";
+var target = isDebug ? "./src/express" : "./dist/express";
 
 module.exports = module.parent
     ? module.parent.require(target)

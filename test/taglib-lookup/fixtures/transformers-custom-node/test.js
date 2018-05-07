@@ -2,7 +2,7 @@ exports.check = function(markoCompiler, expect) {
     var taglibLookup = markoCompiler.taglibLookup;
     var transformers = [];
 
-    var lookup = taglibLookup.buildLookup(__dirname);
+    var lookup = taglibLookup.buildLookup(__dirname, require("fs"));
 
     lookup.forEachTagTransformer("else", function(transformer) {
         transformers.push(transformer);

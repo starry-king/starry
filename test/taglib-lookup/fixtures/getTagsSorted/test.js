@@ -1,5 +1,5 @@
 exports.check = function(markoCompiler, expect, snapshot) {
-    var lookup = markoCompiler.buildTaglibLookup(__dirname);
+    var lookup = markoCompiler.buildTaglibLookup(__dirname, require("fs"));
 
     var tagNames = [];
 

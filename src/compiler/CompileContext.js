@@ -128,9 +128,10 @@ class CompileContext extends EventEmitter {
         this.src = src;
         this.filename = filename;
         this.builder = builder;
+        this.fs = options.fs;
 
         this.dirname = path.dirname(filename);
-        this.taglibLookup = taglibLookup.buildLookup(this.dirname);
+        this.taglibLookup = taglibLookup.buildLookup(this.dirname, this.fs);
         this.data = {};
         this._dataStacks = {};
         this.meta = {};
@@ -519,7 +520,8 @@ class CompileContext extends EventEmitter {
                 ) {
                     var customElement = htmlElements.getRegisteredElement(
                         tagName,
-                        this.dirname
+                        this.dirname,
+                        this.fs
                     );
                     if (customElement) {
                         elNode.customElement = customElement;

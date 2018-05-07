@@ -4,12 +4,12 @@ var types = require("./types");
 var loaders = require("./loaders");
 var DependencyChain = require("./DependencyChain");
 
-function loadTaglibFromProps(taglib, taglibProps) {
-    return loaders.loadTaglibFromProps(taglib, taglibProps);
+function loadTaglibFromProps(taglib, taglibProps, fs) {
+    return loaders.loadTaglibFromProps(taglib, taglibProps, null, fs);
 }
 
-function loadTaglibFromFile(filePath) {
-    return loaders.loadTaglibFromFile(filePath);
+function loadTaglibFromFile(filePath, fs) {
+    return loaders.loadTaglibFromFile(filePath, fs);
 }
 
 function clearCache() {
@@ -20,12 +20,13 @@ function createTaglib(filePath) {
     return new types.Taglib(filePath);
 }
 
-function loadTag(tagProps, filePath) {
+function loadTag(tagProps, filePath, fs) {
     var tag = new types.Tag(filePath);
     loaders.loadTagFromProps(
         tag,
         tagProps,
-        new DependencyChain(filePath ? [filePath] : [])
+        new DependencyChain(filePath ? [filePath] : []),
+        fs
     );
     return tag;
 }

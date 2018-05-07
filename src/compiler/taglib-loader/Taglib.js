@@ -89,8 +89,8 @@ class Taglib {
         );
     }
 
-    addImport(path) {
-        var importedTaglib = loaders.loadTaglibFromFile(path);
+    addImport(path, fs) {
+        var importedTaglib = loaders.loadTaglibFromFile(path, fs);
         handleImport(this, importedTaglib);
     }
 

@@ -9,7 +9,7 @@ var expect = require("chai").expect;
 var autotest = require("../autotest");
 var markoCompiler = require("../../compiler");
 
-markoCompiler.buildTaglibLookup(__dirname);
+markoCompiler.buildTaglibLookup(__dirname, require("fs"));
 
 autotest("fixtures", fixture => {
     let test = fixture.test;

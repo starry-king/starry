@@ -71,7 +71,13 @@ if (g.__MARKO_CONFIG) {
          * Controls whether or not a key should be assigned to all HTML
          * and custom tags at compile-time. The default is `true`
          */
-        autoKeyEnabled: true
+        autoKeyEnabled: true,
+
+        /**
+         * The filesystem to read templates, discover components, and write output.
+         * The default is the node `fs` module
+         */
+        fs: require("fs")
     };
 
     if (process.env.MARKO_CONFIG) {

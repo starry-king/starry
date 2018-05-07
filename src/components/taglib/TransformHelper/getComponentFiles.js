@@ -1,9 +1,8 @@
 "use strict";
 
-const fs = require("fs");
 const path = require("path");
 
-function getComponentFiles(filename) {
+function getComponentFiles(filename, fs) {
     let ext = path.extname(filename);
     if (ext === ".js") {
         return null;

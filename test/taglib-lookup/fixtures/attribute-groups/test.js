@@ -1,6 +1,6 @@
 exports.check = function(markoCompiler, expect) {
     var taglibLookup = markoCompiler.taglibLookup;
-    var lookup = taglibLookup.buildLookup(__dirname);
+    var lookup = taglibLookup.buildLookup(__dirname, require("fs"));
 
     expect(lookup.getAttribute("foo", "cat").type).to.equal("boolean");
     expect(lookup.getAttribute("foo", "age").type).to.equal("integer");

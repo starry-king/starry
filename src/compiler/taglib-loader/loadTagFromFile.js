@@ -5,7 +5,7 @@ var loaders = require("./loaders");
 
 var ok = require("assert").ok;
 
-function loadTagFromFile(filePath) {
+function loadTagFromFile(filePath, fs) {
     ok(filePath, '"filePath" is required');
 
     var tag = cache.get(filePath);
@@ -16,8 +16,8 @@ function loadTagFromFile(filePath) {
         tag = new types.Tag(filePath);
         cache.put(filePath, tag);
 
-        var tagProps = jsonFileReader.readFileSync(filePath);
-        loaders.loadTagFromProps(tag, tagProps);
+        var tagProps = jsonFileReader.readFileSync(filePath, fs);
+        loaders.loadTagFromProps(tag, tagProps, fs);
     }
 
     return tag;

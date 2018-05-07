@@ -1,12 +1,11 @@
 var lassoPackageRoot = require("lasso-package-root");
 var path = require("path");
 var lassoCachingFS = require("lasso-caching-fs");
-var fs = require("fs");
 var stripJsonComments = require("strip-json-comments");
 var fsReadOptions = { encoding: "utf8" };
 var modules = require("../modules");
 
-function parseJSONFile(path) {
+function parseJSONFile(path, fs) {
     var json = fs.readFileSync(path, fsReadOptions);
 
     try {
@@ -19,8 +18,8 @@ function parseJSONFile(path) {
     }
 }
 
-function loadTags(file) {
-    var raw = parseJSONFile(file);
+function loadTags(file, fs) {
+    var raw = parseJSONFile(file, fs);
     var tags = {};
 
     for (var k in raw) {
@@ -51,7 +50,7 @@ function getPackageRootDir(dirname) {
     }
 }
 
-function getRegisteredElement(tagName, dir) {
+function getRegisteredElement(tagName, dir, fs) {
     var packageRootDir = getPackageRootDir(dir);
 
     var currentDir = dir;
@@ -62,7 +61,7 @@ function getRegisteredElement(tagName, dir) {
         if (lassoCachingFS.existsSync(filePath)) {
             var tags = cache[filePath];
             if (!tags) {
-                tags = cache[filePath] = loadTags(filePath);
+                tags = cache[filePath] = loadTags(filePath, fs);
             }
 
             if (tags[tagName]) {

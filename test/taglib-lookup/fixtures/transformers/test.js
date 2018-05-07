@@ -11,7 +11,7 @@ exports.check = function(markoCompiler, expect) {
 
     // expect(transformers.length).to.equal(2);
 
-    lookup = taglibLookup.buildLookup(__dirname);
+    lookup = taglibLookup.buildLookup(__dirname, require("fs"));
 
     transformers = [];
     lookup.forEachTagTransformer("transform-foo", function(transformer) {

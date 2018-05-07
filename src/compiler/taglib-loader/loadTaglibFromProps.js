@@ -32,7 +32,7 @@ function exists(path) {
  * @param {String} path The file system path to the taglib that we are loading
  */
 class TaglibLoader {
-    constructor(taglib, dependencyChain) {
+    constructor(taglib, dependencyChain, fs) {
         ok(
             dependencyChain instanceof DependencyChain,
             '"dependencyChain" is not valid'
@@ -43,10 +43,12 @@ class TaglibLoader {
         this.taglib = taglib;
         this.filePath = taglib.filePath;
         this.dirname = taglib.dirname;
+        this.fs = fs;
     }
 
     load(taglibProps) {
         var taglib = this.taglib;
+        var fs = this.fs;
 
         propertyHandlers(taglibProps, this, this.dependencyChain.toString());
 
@@ -67,7 +69,7 @@ class TaglibLoader {
             var packageJsonPath = nodePath.join(dirname, "package.json");
 
             try {
-                var pkg = jsonFileReader.readFileSync(packageJsonPath);
+                var pkg = jsonFileReader.readFileSync(packageJsonPath, fs);
                 taglib.id = pkg.name;
             } catch (e) {
                 /* ignore error */
@@ -82,6 +84,7 @@ class TaglibLoader {
     _handleTag(tagName, value, dependencyChain) {
         var tagProps;
         var tagFilePath = this.filePath;
+        var fs = this.fs;
 
         var tag;
 
@@ -100,14 +103,14 @@ class TaglibLoader {
 
             tag = new types.Tag(tagFilePath);
 
-            tagProps = jsonFileReader.readFileSync(tagFilePath);
+            tagProps = jsonFileReader.readFileSync(tagFilePath, fs);
             dependencyChain = dependencyChain.append(tagFilePath);
         } else {
             tag = new types.Tag(this.filePath);
             tagProps = value;
         }
 
-        loaders.loadTagFromProps(tag, tagProps, dependencyChain);
+        loaders.loadTagFromProps(tag, tagProps, dependencyChain, fs);
 
         if (tag.name === undefined) {
             tag.name = tagName;
@@ -209,6 +212,7 @@ class TaglibLoader {
         var taglib = this.taglib;
         var path = this.filePath;
         var dirname = this.dirname;
+        var fs = this.fs;
 
         taglib.tagsDir = dir;
 
@@ -220,7 +224,8 @@ class TaglibLoader {
                         dirname,
                         dir[i],
                         taglib,
-                        this.dependencyChain.append(`tags-dir[${i}]`)
+                        this.dependencyChain.append(`tags-dir[${i}]`),
+                        fs
                     );
                 }
             } else {
@@ -229,7 +234,8 @@ class TaglibLoader {
                     dirname,
                     dir,
                     taglib,
-                    this.dependencyChain.append(`tags-dir`)
+                    this.dependencyChain.append(`tags-dir`),
+                    fs
                 );
             }
         }
@@ -249,6 +255,7 @@ class TaglibLoader {
         //       section
         var taglib = this.taglib;
         var dirname = this.dirname;
+        var fs = this.fs;
         var importPath;
 
         if (imports && Array.isArray(imports)) {
@@ -262,7 +269,7 @@ class TaglibLoader {
                             curImport
                         );
                         var packageDir = nodePath.dirname(packagePath);
-                        var pkg = jsonFileReader.readFileSync(packagePath);
+                        var pkg = jsonFileReader.readFileSync(packagePath, fs);
                         var dependencies = pkg.dependencies;
                         if (dependencies) {
                             var dependencyNames = Object.keys(dependencies);
@@ -275,14 +282,14 @@ class TaglibLoader {
                                 );
 
                                 if (importPath) {
-                                    taglib.addImport(importPath);
+                                    taglib.addImport(importPath, fs);
                                 }
                             }
                         }
                     } else {
                         importPath = resolveFrom(dirname, curImport);
                         if (importPath) {
-                            taglib.addImport(importPath);
+                            taglib.addImport(importPath, fs);
                         } else {
                             throw new Error(
                                 "Import not found: " +
@@ -401,7 +408,7 @@ class TaglibLoader {
     }
 }
 
-function loadTaglibFromProps(taglib, taglibProps, dependencyChain) {
+function loadTaglibFromProps(taglib, taglibProps, dependencyChain, fs) {
     ok(taglib, '"taglib" is required');
     ok(taglibProps, '"taglibProps" is required');
     ok(taglib.filePath, '"taglib.filePath" is required');
@@ -410,7 +417,7 @@ function loadTaglibFromProps(taglib, taglibProps, dependencyChain) {
         dependencyChain = new DependencyChain([taglib.filePath]);
     }
 
-    var taglibLoader = new TaglibLoader(taglib, dependencyChain);
+    var taglibLoader = new TaglibLoader(taglib, dependencyChain, fs);
 
     try {
         taglibLoader.load(taglibProps);

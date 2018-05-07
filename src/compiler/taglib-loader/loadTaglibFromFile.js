@@ -5,7 +5,7 @@ var loaders = require("./loaders");
 
 var ok = require("assert").ok;
 
-function loadFromFile(filePath) {
+function loadFromFile(filePath, fs) {
     ok(filePath, '"filePath" is required');
 
     var taglib = cache.get(filePath);
@@ -16,8 +16,8 @@ function loadFromFile(filePath) {
         taglib = new types.Taglib(filePath);
         cache.put(filePath, taglib);
 
-        var taglibProps = jsonFileReader.readFileSync(filePath);
-        loaders.loadTaglibFromProps(taglib, taglibProps);
+        var taglibProps = jsonFileReader.readFileSync(filePath, fs);
+        loaders.loadTaglibFromProps(taglib, taglibProps, null, fs);
     }
 
     return taglib;

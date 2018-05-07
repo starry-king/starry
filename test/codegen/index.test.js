@@ -34,7 +34,8 @@ autotest("fixtures", fixture => {
         var context = new CompileContext(
             "dummy",
             resolve("dummy.marko"),
-            builder
+            builder,
+            { fs: require("fs") }
         );
         var codegen = createCodeGenerator(context);
         var codeWriter = createCodeWriter(context);
@@ -59,7 +60,8 @@ describe("codegen", function() {
         var context = new CompileContext(
             "dummy",
             path.join(__dirname, "dummy.marko"),
-            builder
+            builder,
+            { fs: require("fs") }
         );
         var codegen = createCodeGenerator(context);
 

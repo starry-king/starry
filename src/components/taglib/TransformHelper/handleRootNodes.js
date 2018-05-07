@@ -163,7 +163,7 @@ module.exports = function handleRootNodes() {
         return;
     }
 
-    let componentFiles = getComponentFiles(context.filename);
+    let componentFiles = getComponentFiles(context.filename, context.fs);
     if (!componentFiles) {
         return;
     }

@@ -10,7 +10,6 @@ var CompileContext = require("./CompileContext");
 var globalConfig = require("./config");
 var InlineCompiler = require("./InlineCompiler");
 var ok = require("assert").ok;
-var fs = require("fs");
 var taglibLoader = require("./taglib-loader");
 
 var defaults = extend({}, globalConfig);
@@ -145,6 +144,8 @@ function compileFile(filename, options, callback) {
     options = options || {};
     options.sourceOnly = options.sourceOnly !== false;
 
+    var fs = options.fs || globalConfig.fs;
+
     if (callback) {
         fs.readFile(filename, { encoding: "utf8" }, function(err, templateSrc) {
             if (err) {
@@ -255,9 +256,9 @@ exports.taglibLookup = taglibLookup;
 exports.taglibLoader = taglibLoader;
 exports.taglibFinder = require("./taglib-finder");
 
-function registerTaglib(taglibProps, taglibPath) {
+function registerTaglib(taglibProps, taglibPath, fs) {
     var taglib = taglibLoader.createTaglib(taglibPath);
-    taglibLoader.loadTaglibFromProps(taglib, taglibProps);
+    taglibLoader.loadTaglibFromProps(taglib, taglibProps, fs);
     taglibLookup.registerTaglib(taglib);
 }
 
@@ -297,9 +298,9 @@ function registerCoreTaglibs() {
     }
 }
 
-function buildTaglibLookup(dirname) {
+function buildTaglibLookup(dirname, fs) {
     registerCoreTaglibs();
-    return taglibLookup.buildLookup(dirname);
+    return taglibLookup.buildLookup(dirname, fs);
 }
 
 exports.buildTaglibLookup = buildTaglibLookup;

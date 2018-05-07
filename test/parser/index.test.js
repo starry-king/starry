@@ -22,7 +22,9 @@ autotest("fixtures", fixture => {
     test(() => {
         var templatePath = resolve("template.marko");
         var src = fs.readFileSync(templatePath, { encoding: "utf8" });
-        var context = new CompileContext(src, templatePath, builder);
+        var context = new CompileContext(src, templatePath, builder, {
+            fs: require("fs")
+        });
         var ast = parser.parse(src, context);
         snapshot(ast, ".json");
     });

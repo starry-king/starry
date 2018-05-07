@@ -3,7 +3,6 @@ require("../");
 
 const path = require("path");
 const resolveFrom = require("resolve-from");
-const fs = require("fs");
 const fsReadOptions = { encoding: "utf8" };
 const MARKO_EXTENSIONS = Symbol("MARKO_EXTENSIONS");
 
@@ -25,6 +24,7 @@ function compile(templatePath, markoCompiler, compilerOptions) {
         compilerOptions = markoCompiler.defaultOptions;
     }
 
+    var fs = compilerOptions.fs;
     var writeToDisk = compilerOptions.writeToDisk;
 
     var templateSrc;

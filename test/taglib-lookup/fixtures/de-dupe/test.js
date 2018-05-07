@@ -3,7 +3,8 @@ var nodePath = require("path");
 exports.check = function(markoCompiler, expect) {
     var taglibLookup = markoCompiler.taglibLookup;
     var lookup = taglibLookup.buildLookup(
-        nodePath.join(__dirname, "taglib-duplicate")
+        nodePath.join(__dirname, "taglib-duplicate"),
+        require("fs")
     );
 
     // The "duplicate-bar" tag was declared in the lower

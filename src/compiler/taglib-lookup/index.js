@@ -23,8 +23,8 @@ function handleImports(lookup, taglib) {
     }
 }
 
-function buildLookup(dirname) {
-    var taglibs = taglibFinder.find(dirname, exports.registeredTaglibs);
+function buildLookup(dirname, fs) {
+    var taglibs = taglibFinder.find(dirname, exports.registeredTaglibs, fs);
 
     var lookupCacheKey = taglibs
         .map(function(taglib) {

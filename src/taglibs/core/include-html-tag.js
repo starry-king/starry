@@ -1,10 +1,10 @@
 "use strict";
 
 var resolveFrom = require("resolve-from");
-var fs = require("fs");
 
 module.exports = function codeGenerator(el, codegen) {
     let argument = el.argument;
+    let context = codegen.context;
     if (!argument) {
         return;
     }
@@ -30,7 +30,7 @@ module.exports = function codeGenerator(el, codegen) {
         return;
     }
 
-    var txt = fs.readFileSync(path, { encoding: "utf8" });
+    var txt = context.fs.readFileSync(path, { encoding: "utf8" });
     return builder.text(
         builder.literal(txt),
         false /* do not escape since this is HTML*/

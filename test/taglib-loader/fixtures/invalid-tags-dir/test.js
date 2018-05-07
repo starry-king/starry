@@ -5,7 +5,7 @@ exports.check = function(taglibLoader, expect) {
     var tagPath = nodePath.join(__dirname, "tags/foo/marko-tag.json");
 
     expect(function() {
-        taglibLoader.loadTaglibFromFile(taglibPath);
+        taglibLoader.loadTaglibFromFile(taglibPath, require("fs"));
     }).to.throw(
         `Invalid option: INVALID ([${taglibPath} → <foo> → ${tagPath}]`
     );

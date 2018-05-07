@@ -58,7 +58,7 @@ function getAllDependencyNames(pkg) {
     return Object.keys(map);
 }
 
-function find(dirname, registeredTaglibs) {
+function find(dirname, registeredTaglibs, fs) {
     var found = findCache[dirname];
     if (found) {
         return found;
@@ -98,7 +98,7 @@ function find(dirname, registeredTaglibs) {
             let taglib;
 
             if (existsCached(taglibPath)) {
-                taglib = taglibLoader.loadTaglibFromFile(taglibPath);
+                taglib = taglibLoader.loadTaglibFromFile(taglibPath, fs);
                 helper.addTaglib(taglib);
             }
 
@@ -116,7 +116,8 @@ function find(dirname, registeredTaglibs) {
                         nodePath.dirname(componentsPath),
                         "./components",
                         taglib,
-                        new DependencyChain([componentsPath])
+                        new DependencyChain([componentsPath]),
+                        fs
                     );
                     helper.addTaglib(taglib);
                 }
@@ -143,7 +144,10 @@ function find(dirname, registeredTaglibs) {
                     name + "/marko.json"
                 );
                 if (taglibPath) {
-                    var taglib = taglibLoader.loadTaglibFromFile(taglibPath);
+                    var taglib = taglibLoader.loadTaglibFromFile(
+                        taglibPath,
+                        fs
+                    );
                     helper.addTaglib(taglib);
                 }
             }

@@ -1,7 +1,6 @@
 "use strict";
 
 const nodePath = require("path");
-const fs = require("fs");
 const stripJsonComments = require("strip-json-comments");
 const tagDefFromCode = require("./tag-def-from-code");
 const loaders = require("./loaders");
@@ -40,7 +39,7 @@ function createDefaultTagDef() {
     };
 }
 
-function getFileMap(dirname) {
+function getFileMap(dirname, fs) {
     let fileMap = {};
     let files = fs.readdirSync(dirname);
 
@@ -67,12 +66,12 @@ function getPath(filename, fileMap) {
     return file[Object.keys(file)[0]];
 }
 
-function findAndSetFile(tagDef, tagDirname) {
+function findAndSetFile(tagDef, tagDirname, fs) {
     if (!fs.statSync(tagDirname).isDirectory()) {
         return;
     }
 
-    let fileMap = getFileMap(tagDirname);
+    let fileMap = getFileMap(tagDirname, fs);
 
     for (let i = 0; i < searchFiles.length; i++) {
         let name = searchFiles[i].name;
@@ -104,7 +103,8 @@ module.exports = function scanTagsDir(
     tagsConfigDirname,
     dir,
     taglib,
-    dependencyChain
+    dependencyChain,
+    fs
 ) {
     let prefix;
 
@@ -168,7 +168,7 @@ module.exports = function scanTagsDir(
             }
 
             if (!hasFile(tagDef)) {
-                let fileWasSet = findAndSetFile(tagDef, tagDirname);
+                let fileWasSet = findAndSetFile(tagDef, tagDirname, fs);
                 if (!fileWasSet) {
                     if (hasTagJson) {
                         throw new Error(
@@ -207,7 +207,7 @@ module.exports = function scanTagsDir(
         }
 
         let tag = new types.Tag(tagJsonPath || tagDirname);
-        loaders.loadTagFromProps(tag, tagDef, tagDependencyChain);
+        loaders.loadTagFromProps(tag, tagDef, tagDependencyChain, fs);
         tag.name = tag.name || tagName;
         taglib.addTag(tag);
     }

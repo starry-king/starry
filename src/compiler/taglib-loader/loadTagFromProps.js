@@ -13,15 +13,6 @@ var createError = require("raptor-util/createError");
 var types = require("./types");
 var loaders = require("./loaders");
 
-function exists(path) {
-    try {
-        markoModules.resolve(path);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
 function removeDashes(str) {
     return str.replace(/-([a-z])/g, function(match, lower) {
         return lower.toUpperCase();
@@ -52,9 +43,10 @@ function hasAttributes(tagProps) {
  * @param {String} path An informational path associated with this tag (used for error reporting)
  */
 class TagLoader {
-    constructor(tag, dependencyChain) {
+    constructor(tag, dependencyChain, fs) {
         this.tag = tag;
         this.dependencyChain = dependencyChain;
+        this.fs = fs;
 
         this.filePath = tag.filePath;
         this.dirname = tag.dir || tag.dirname;
@@ -248,7 +240,8 @@ class TagLoader {
                 loadTagFromProps(
                     nestedTag,
                     tagProps,
-                    dependencyChain.append(part)
+                    dependencyChain.append(part),
+                    this.fs
                 );
 
                 // We use the '[]' suffix to indicate that a nested tag
@@ -317,7 +310,7 @@ class TagLoader {
         var dirname = this.dirname;
 
         var path = nodePath.resolve(dirname, value);
-        if (!exists(path)) {
+        if (!this.fs.existsSync(path)) {
             throw new Error('Template at path "' + path + '" does not exist.');
         }
         tag.template = path;
@@ -584,6 +577,7 @@ class TagLoader {
     nestedTags(value) {
         var filePath = this.filePath;
         var tag = this.tag;
+        var fs = this.fs;
 
         forEachEntry(value, (nestedTagName, nestedTagDef) => {
             var dependencyChain = this.dependencyChain.append(
@@ -591,7 +585,7 @@ class TagLoader {
             );
             var nestedTag = new types.Tag(filePath);
 
-            loadTagFromProps(nestedTag, nestedTagDef, dependencyChain);
+            loadTagFromProps(nestedTag, nestedTagDef, dependencyChain, fs);
 
             nestedTag.name = nestedTagName;
             tag.addNestedTag(nestedTag);
@@ -678,11 +672,11 @@ function isSupportedProperty(name) {
     return TagLoader.prototype.hasOwnProperty(name);
 }
 
-function loadTagFromProps(tag, tagProps, dependencyChain) {
+function loadTagFromProps(tag, tagProps, dependencyChain, fs) {
     ok(typeof tagProps === "object", 'Invalid "tagProps"');
     ok(dependencyChain, '"dependencyChain" is required');
 
-    var tagLoader = new TagLoader(tag, dependencyChain);
+    var tagLoader = new TagLoader(tag, dependencyChain, fs);
 
     try {
         tagLoader.load(tagProps);

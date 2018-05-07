@@ -1,7 +1,6 @@
 "use strict";
 
 var nodePath = require("path");
-var fs = require("fs");
 var Module = require("module").Module;
 var compilerPath = nodePath.join(__dirname, "../compiler");
 var markoCompiler = require(compilerPath);
@@ -9,6 +8,8 @@ var cwd = process.cwd();
 var fsOptions = { encoding: "utf8" };
 
 module.exports = function load(templatePath, templateSrc, options) {
+    var fs = (options && options.fs) || markoCompiler.defaultOptions.fs;
+
     if (typeof templatePath === "string") {
         const parsed = nodePath.parse(templatePath);
 
@@ -120,6 +121,8 @@ function getPreviousTemplate(templatePath, options) {
     templatePath = nodePath.resolve(cwd, templatePath);
 
     if (options.assumeUpToDate) {
+        var fs = options.fs;
+
         if (fs.existsSync(targetFilePrecompiled)) {
             return require(targetFilePrecompiled);
         }
@@ -142,6 +145,7 @@ function doLoad(templatePath, templateSrc, options) {
     options = Object.assign({}, markoCompiler.defaultOptions, options);
 
     var template;
+
     if (typeof templatePath.render === "function") {
         template = templatePath;
     } else {
@@ -149,6 +153,7 @@ function doLoad(templatePath, templateSrc, options) {
 
         template = getPreviousTemplate(templatePath, options);
         if (!template) {
+            var fs = options.fs;
             var writeToDisk = options.writeToDisk;
 
             if (templateSrc == null) {
